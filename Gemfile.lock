@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    codeclimate_batch (0.1.1)
+    codeclimate_batch (0.1.2)
       json
 
 GEM
