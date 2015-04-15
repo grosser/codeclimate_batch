@@ -21,8 +21,11 @@ end
 After tests have finished:
 
 ```Bash
-# send all code climate reports to cc-amend, unifying them once 4 reports have come in
+# send coverage reports to cc-amend, unifying once 4 reports arrive
 codeclimate-batch --groups 4
+
+# custom key (when not using travis), must be the same on all hosts
+codeclimate-batch --groups 4 --key my-app/$BUILD_NUMBER
 ```
 
 Author
