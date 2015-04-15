@@ -1,7 +1,15 @@
-require "tempfile"
 require "spec_helper"
+require "tempfile"
+require "codeclimate-test-reporter"
 
 describe CodeclimateBatch do
+  def with_env(env)
+    env.each { |k,v| ENV[k] = v }
+    yield
+  ensure
+    env.each { |k,_v| ENV[k] = nil }
+  end
+
   it "has a VERSION" do
     CodeclimateBatch::VERSION.should =~ /^[\.\da-z]+$/
   end
@@ -15,13 +23,6 @@ describe CodeclimateBatch do
 
     def batch(command, options={})
       sh("#{Bundler.root}/bin/codeclimate-batch #{command}", options)
-    end
-
-    def with_env(env)
-      env.each { |k,v| ENV[k] = v }
-      yield
-    ensure
-      env.each { |k,_v| ENV[k] = nil }
     end
 
     it "shows --version" do
@@ -53,6 +54,42 @@ describe CodeclimateBatch do
 
         # all cleaned up ?
         Dir["#{base}*"].size.should == 0
+      end
+    end
+  end
+
+  describe ".start" do
+    let(:default) {{"TRAVIS" => "1", "TRAVIS_BRANCH" => "master", "TO_FILE" => nil}}
+
+    it "calls start when on travis master" do
+      with_env(default) do
+        CodeClimate::TestReporter.should_receive(:start)
+        CodeclimateBatch.start
+        ENV["TO_FILE"].should == "1"
+      end
+    end
+
+    it "starts without travis since we don't know how to handle other cis" do
+      default.delete("TRAVIS")
+      with_env(default) do
+        CodeClimate::TestReporter.should_receive(:start)
+        CodeclimateBatch.start
+      end
+    end
+
+    it "does not start on different branch" do
+      default["TRAVIS_BRANCH"] = "mooo"
+      with_env(default) do
+        CodeClimate::TestReporter.should_not_receive(:start)
+        CodeclimateBatch.start
+      end
+    end
+
+    it "does not start on non-PR" do
+      default["TRAVIS_PULL_REQUEST"] = "123"
+      with_env(default) do
+        CodeClimate::TestReporter.should_not_receive(:start)
+        CodeclimateBatch.start
       end
     end
   end

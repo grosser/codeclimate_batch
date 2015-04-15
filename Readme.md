@@ -12,11 +12,9 @@ Usage
 
 ```Ruby
 # test_helper.rb
-# code climate only accepts reports from master but records coverage on all PRs -> wasted time
-if ENV['TRAVIS_BRANCH'] == 'master' && ENV['TRAVIS_PULL_REQUEST'].to_i == 0
-  ENV['TO_FILE'] = '1' # write results to file since we need to combine them before sending
-  require 'codeclimate-test-reporter'
-  CodeClimate::TestReporter.start
+if ENV['CI']
+  require 'codeclimate_batch'
+  CodeclimateBatch.start
 end
 ```
 

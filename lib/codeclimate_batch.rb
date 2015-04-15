@@ -2,6 +2,14 @@ require 'json'
 
 module CodeclimateBatch
   class << self
+    # code climate only accepts reports from master but records coverage on all PRs -> wasted time
+    def start
+      return if ENV['TRAVIS'] && (ENV['TRAVIS_BRANCH'] != 'master' || ENV['TRAVIS_PULL_REQUEST'].to_i != 0)
+      ENV['TO_FILE'] = '1' # write results to file since we need to combine them before sending
+      require 'codeclimate-test-reporter'
+      CodeClimate::TestReporter.start
+    end
+
     def unify(coverage_files)
       initial, *rest = coverage_files
       report = load(initial)
