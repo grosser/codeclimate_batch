@@ -1,0 +1,48 @@
+#!/usr/bin/env ruby
+# report coverage to code-climate by combining reports from multiple servers
+
+# enable local usage from cloned repo
+root = File.expand_path("../..", __FILE__)
+$LOAD_PATH << "#{root}/lib" if File.exist?("#{root}/Gemfile")
+
+require 'benchmark'
+require 'optparse'
+require 'codeclimate_batch'
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = <<BANNER
+Report a batch of codeclimate results by merging and from multiple servers
+
+Usage:
+    codeclimate-batch --groups 4
+
+Options:
+BANNER
+  opts.on("--groups COUNT", Integer, "how many groups are being reports?") { |g| options[:groups] = g }
+  opts.on("--key KEY", String, "key to use to report to cc-amend (auto-filled with repo + build-number on travis)") { |k| options[:key] = k }
+  opts.on("-h", "--help","Show this.") { puts opts; exit }
+  opts.on('-v', '--version','Show Version'){ puts CodeclimateBatch::VERSION; exit}
+end.parse!
+
+coverage_files = "#{Dir.tmpdir}/codeclimate-test-coverage-*"
+files = Dir.glob(coverage_files) # if coverage was not run there will be no files
+success = true
+
+status = if files.any?
+  time = Benchmark.realtime do
+    content = CodeclimateBatch.unify(files)
+    File.write('report.json', JSON.dump(content))
+    key = options[:key] || "#{ENV.fetch('TRAVIS_REPO_SLUG').tr('/', '-')}-#{ENV.fetch('TRAVIS_BUILD_NUMBER')}"
+    puts `curl -X POST --data-binary @report.json https://cc-amend.herokuapp.com/amend/#{key}?count=#{options.fetch(:groups)}`
+    success = $?.success?
+    system("rm -rf #{coverage_files} report.json") # cleanup in case we run locally
+  end
+  "#{time.round(2)}s to send #{files.size} reports"
+else
+  "No files found to report"
+end
+
+puts "Code climate: #{status}"
+
+exit(success ? 0 : 1)

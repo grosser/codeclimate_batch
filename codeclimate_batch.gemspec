@@ -8,4 +8,6 @@ Gem::Specification.new name, CodeclimateBatch::VERSION do |s|
   s.homepage = "https://github.com/grosser/#{name}"
   s.files = `git ls-files lib/ bin/ MIT-LICENSE`.split("\n")
   s.license = "MIT"
+  s.add_runtime_dependency "json"
+  s.executables = ["codeclimate-batch"]
 end
