@@ -1,5 +1,4 @@
 require "spec_helper"
-require "tempfile"
 require "codeclimate-test-reporter"
 
 describe CodeclimateBatch do

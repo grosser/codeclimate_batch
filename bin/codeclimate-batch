@@ -8,6 +8,7 @@ $LOAD_PATH << "#{root}/lib" if File.exist?("#{root}/Gemfile")
 require 'benchmark'
 require 'optparse'
 require 'codeclimate_batch'
+require 'tmpdir'
 
 options = {}
 OptionParser.new do |opts|
