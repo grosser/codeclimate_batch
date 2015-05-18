@@ -22,6 +22,7 @@ Options:
 BANNER
   opts.on("--groups COUNT", Integer, "how many groups are being reports?") { |g| options[:groups] = g }
   opts.on("--key KEY", String, "key to use to report to cc-amend (auto-filled with repo + build-number on travis)") { |k| options[:key] = k }
+  opts.on("--host HOST", String, "your host for the cc-amend app") { |h| options[:host] = h }
   opts.on("-h", "--help","Show this.") { puts opts; exit }
   opts.on('-v', '--version','Show Version'){ puts CodeclimateBatch::VERSION; exit}
 end.parse!
@@ -35,7 +36,8 @@ status = if files.any?
     content = CodeclimateBatch.unify(files)
     File.write('report.json', JSON.dump(content))
     key = options[:key] || "#{ENV.fetch('TRAVIS_REPO_SLUG').tr('/', '-')}-#{ENV.fetch('TRAVIS_BUILD_NUMBER')}"
-    puts `curl -X POST --data-binary @report.json https://cc-amend.herokuapp.com/amend/#{key}?count=#{options.fetch(:groups)}`
+    host = options[:host] || "https://cc-amend.herokuapp.com"
+    puts `curl -X POST --data-binary @report.json #{host}/amend/#{key}?count=#{options.fetch(:groups)}`
     success = $?.success?
     system("rm -rf #{coverage_files} report.json") # cleanup in case we run locally
   end
