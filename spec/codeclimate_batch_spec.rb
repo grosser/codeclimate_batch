@@ -58,13 +58,13 @@ describe CodeclimateBatch do
   end
 
   describe ".start" do
-    let(:default) {{"TRAVIS" => "1", "TRAVIS_BRANCH" => "master", "TO_FILE" => nil}}
+    let(:default) {{"TRAVIS" => "1", "TRAVIS_BRANCH" => "master", "CODECLIMATE_TO_FILE" => nil}}
 
     it "calls start when on travis master" do
       with_env(default) do
         CodeClimate::TestReporter.should_receive(:start)
         CodeclimateBatch.start
-        ENV["TO_FILE"].should == "1"
+        ENV["CODECLIMATE_TO_FILE"].should == "1"
       end
     end
 
