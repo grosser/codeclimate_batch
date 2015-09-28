@@ -58,7 +58,7 @@ describe CodeclimateBatch do
   end
 
   describe ".start" do
-    let(:default) {{"TRAVIS" => "1", "TRAVIS_BRANCH" => "master", "CODECLIMATE_TO_FILE" => nil}}
+    let(:default) {{"TRAVIS" => "1", "TRAVIS_BRANCH" => "master", "CODECLIMATE_TO_FILE" => nil, "TRAVIS_PULL_REQUEST" => nil}}
 
     it "calls start when on travis master" do
       with_env(default) do
