@@ -23,13 +23,13 @@ module CodeclimateBatch
       report
     end
 
+    private
+
     # Return the default branch. Most of the time it's master, but can be overridden
     # by setting DEFAULT_BRANCH in the environment.
     def default_branch
       ENV['DEFAULT_BRANCH'] || 'master'
     end
-
-    private
 
     # Check if we are running on Travis CI.
     def travis?

@@ -18,6 +18,8 @@ if ENV['CI']
 end
 ```
 
+If your default branch is something other than `master`, set `DEFAULT_BRANCH` in the environment to its name prior to running.
+
 After tests have finished:
 
 ```Bash
