@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    codeclimate_batch (0.3.0)
+    codeclimate_batch (0.4.0)
       json
 
 GEM
@@ -44,4 +44,4 @@ DEPENDENCIES
   rspec
 
 BUNDLED WITH
-   1.10.6
+   1.11.2
