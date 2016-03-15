@@ -18,7 +18,8 @@ if ENV['CI']
 end
 ```
 
-If your default branch is something other than `master`, set `DEFAULT_BRANCH` in the environment to its name prior to running.
+ - Will only run when `ENV['CODECLIMATE_REPO_TOKEN']` is set and running on `master` branch
+ - If your default branch is not `master`, set `ENV['DEFAULT_BRANCH']`
 
 After tests have finished:
 
