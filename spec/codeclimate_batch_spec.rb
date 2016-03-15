@@ -84,6 +84,22 @@ describe CodeclimateBatch do
       end
     end
 
+    it "starts on different branch if set as default branch" do
+      default.merge! "TRAVIS_BRANCH" => "moooo", "DEFAULT_BRANCH" => "moooo"
+      with_env(default) do
+        CodeClimate::TestReporter.should_receive(:start)
+        CodeclimateBatch.start
+      end
+    end
+
+    it "does not starts on different branch if it doesn't match default branch" do
+      default.merge! "TRAVIS_BRANCH" => "moooo", "DEFAULT_BRANCH" => "monster"
+      with_env(default) do
+        CodeClimate::TestReporter.should_not_receive(:start)
+        CodeclimateBatch.start
+      end
+    end
+
     it "does not start on non-PR" do
       default["TRAVIS_PULL_REQUEST"] = "123"
       with_env(default) do

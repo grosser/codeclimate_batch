@@ -2,9 +2,11 @@ require 'json'
 
 module CodeclimateBatch
   class << self
-    # code climate only accepts reports from master but records coverage on all PRs -> wasted time
+    # Start TestReporter with appropriate settings.
+    # Note that Code Climate only accepts reports from the default branch (usually master, but can be changed)
+    # but records coverage on all PRs -> wasted time
     def start
-      return if ENV['TRAVIS'] && (ENV['TRAVIS_BRANCH'] != 'master' || ENV['TRAVIS_PULL_REQUEST'].to_i != 0)
+      return if travis? && (outside_default_branch? || pull_request?)
       ENV['CODECLIMATE_TO_FILE'] = '1' # write results to file since we need to combine them before sending
       gem 'codeclimate-test-reporter', '>= 0.4.8' # get CODECLIMATE_TO_FILE support and avoid deprecations
       require 'codeclimate-test-reporter'
@@ -22,6 +24,27 @@ module CodeclimateBatch
     end
 
     private
+
+    # Return the default branch. Most of the time it's master, but can be overridden
+    # by setting DEFAULT_BRANCH in the environment.
+    def default_branch
+      ENV['DEFAULT_BRANCH'] || 'master'
+    end
+
+    # Check if we are running on Travis CI.
+    def travis?
+      ENV['TRAVIS']
+    end
+
+    # Check if our Travis build is running on the default branch.
+    def outside_default_branch?
+      default_branch != ENV['TRAVIS_BRANCH']
+    end
+
+    # Check if running a pull request.
+    def pull_request?
+      ENV['TRAVIS_PULL_REQUEST'].to_i != 0
+    end
 
     def load(file)
       JSON.load(File.read(file))
