@@ -100,10 +100,10 @@ describe CodeclimateBatch do
       end
     end
 
-    it "does not start on non-PR" do
+    it "starts on PR" do
       default["TRAVIS_PULL_REQUEST"] = "123"
       with_env(default) do
-        CodeClimate::TestReporter.should_not_receive(:start)
+        CodeClimate::TestReporter.should_receive(:start)
         CodeclimateBatch.start
       end
     end

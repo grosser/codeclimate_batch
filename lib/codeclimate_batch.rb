@@ -4,9 +4,9 @@ module CodeclimateBatch
   class << self
     # Start TestReporter with appropriate settings.
     # Note that Code Climate only accepts reports from the default branch (usually master, but can be changed)
-    # but records coverage on all PRs -> wasted time
+    # but records coverage on all PRs and displays their coverage difference
     def start
-      return if travis? && (outside_default_branch? || pull_request?)
+      return if travis? && (outside_default_branch? && !pull_request?)
       ENV['CODECLIMATE_TO_FILE'] = '1' # write results to file since we need to combine them before sending
       gem 'codeclimate-test-reporter', '>= 0.4.8' # get CODECLIMATE_TO_FILE support and avoid deprecations
       require 'codeclimate-test-reporter'
