@@ -19,8 +19,9 @@ if ENV['CI']
 end
 ```
 
- - Will only run when `ENV['CODECLIMATE_REPO_TOKEN']` is set and running on `master` branch
+ - Will run when `ENV['CODECLIMATE_REPO_TOKEN']` is set and running on `master` branch
  - If your default branch is not `master`, set `ENV['DEFAULT_BRANCH']`
+ - Will also run on Pull Requests on Travis
 
 After tests have finished:
 
