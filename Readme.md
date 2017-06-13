@@ -1,3 +1,5 @@
+[Deprecated, use builtin](https://docs.codeclimate.com/docs/setting-up-test-coverage#section-parallel-tests-and-multiple-test-suites)
+
 Report a batch of codeclimate results by merging and from multiple servers.<br/>
 Uses [cc-amend](https://github.com/grosser/cc-amend) to do the merging since workers will not share a common disk.
 
